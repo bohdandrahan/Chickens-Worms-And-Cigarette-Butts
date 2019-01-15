@@ -7,8 +7,8 @@ class Vehicle {
     this.velocity = createVector(0, -2);
     this.position = createVector(x, y);
     this.r = 6;
-    this.maxspeed = 8;
-    this.maxforce = 0.2;
+    this.maxspeed = 3;
+    this.maxforce = 0.4;
   }
 
   // Method to update location
@@ -30,20 +30,25 @@ class Vehicle {
   // A method that calculates a steering force towards a target
   // STEER = DESIRED MINUS VELOCITY
 
-  hunt(apples){
+  behavior(){
+    
+  }
+
+  hunt(preys){
     let record = Infinity;
     let nearest = -1;
-    for (var i = 0; i < apples.length; i++) {
-      console.log(i)
-      let d = this.position.dist(apples[i].position);
+    for (var i = 0; i < preys.length; i++) {
+      let d = this.position.dist(preys[i].position);
       if (d < record){
         record = d;
         nearest = i;
       }
     }
-    this.seek(apples[nearest].position)
-    if(record < 5):
-      apples.splice(nearest, 1)
+    if(record < 5){
+      preys.splice(nearest, 1)
+    }else if(nearest > -1){
+      this.seek(preys[nearest].position)
+    }
   }
 
   seek(target) {

@@ -12,7 +12,7 @@ function setup() {
     let x = random(width);
     let y = random(height);
 
-  food = new Food(10);
+  food = new Food(100,100);
   }
 
 }
@@ -22,6 +22,8 @@ function draw() {
 
   food.display();
   vehicle.hunt(food.apples);
+  vehicle.hunt(food.posionedApples);
+
   vehicle.update();
   vehicle.display();
 
