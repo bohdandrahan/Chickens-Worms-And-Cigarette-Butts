@@ -1,14 +1,21 @@
 // http://natureofcode.com
 // The "Vehicle" class
-
 class Vehicle {
   constructor(x, y) {
     this.acceleration = createVector(0, 0);
-    this.velocity = createVector(0, -2);
+    this.velocity = createVector(0, 0);
     this.position = createVector(x, y);
     this.r = 6;
-    this.maxspeed = 3;
-    this.maxforce = 0.4;
+    this.setMaxSpeed();
+    this.setMaxForce();
+  }
+
+  setMaxSpeed(maxspeed = 3){
+    this.maxspeed = maxspeed 
+  }
+
+  setMaxForce(maxforce = 0.4) {
+    this.maxforce = maxforce
   }
 
   // Method to update location
@@ -30,25 +37,47 @@ class Vehicle {
   // A method that calculates a steering force towards a target
   // STEER = DESIRED MINUS VELOCITY
 
-  behavior(){
-    
+  behavior(groupsToEat, groupsToAvoid){
   }
 
   hunt(preys){
-    let record = Infinity;
-    let nearest = -1;
-    for (var i = 0; i < preys.length; i++) {
-      let d = this.position.dist(preys[i].position);
-      if (d < record){
-        record = d;
-        nearest = i;
+    let nearest = this.findNearest(preys)
+    if (nearest){
+      if(this.distanceTo(nearest) < 5){
+        preys.splice(preys.indexOf(nearest), 1);
+      }else {
+        this.seek(nearest.position);
       }
     }
-    if(record < 5){
-      preys.splice(nearest, 1)
-    }else if(nearest > -1){
-      this.seek(preys[nearest].position)
+  }
+
+  avoid(group){
+    let nearest = this.findNearest(group)
+    if (nearest){
+      if(this.distanceTo(nearest) < 5){
+        group.splice(group.indexOf(nearest), 1);
+      }else {
+        this.seek(nearest.position);
+      }
     }
+  }
+
+
+  findNearest(preys) {
+    let record = Infinity;
+    let nearest = null;
+    for (var i = 0; i < preys.length; i++) {
+      let d = this.distanceTo(preys[i]);
+      if (d < record){
+        record = d;
+        nearest = preys[i];
+      }
+    }
+    return nearest;
+  }
+
+  distanceTo(object) {
+    return this.position.dist(object.position);
   }
 
   seek(target) {
@@ -79,6 +108,21 @@ class Vehicle {
     vertex(-this.r, this.r * 2);
     vertex(this.r, this.r * 2);
     endShape(CLOSE);
+    pop();
+  }
+}
+
+class Worm extends Vehicle{
+
+  display() {
+    // Draw a worm
+    var theta = this.velocity.heading() + PI / 2;
+    push();
+    translate(this.position.x, this.position.y);
+    rotate(theta);
+    stroke('pink');
+    strokeWeight(4);
+    line(0, -this.r * 2, 0, this.r * 2);
     pop();
   }
 }
