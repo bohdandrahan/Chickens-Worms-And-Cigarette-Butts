@@ -44,11 +44,16 @@ class Animal {
     this.setMaxSpeed();
     this.setMaxForce();
     this.setDnaLen();
-    this.dna = []
+    this.setNutritionValues();
+    this.dna = [];
     for (let i = 0; i < this.dnaLen; i++){
-      this.dna.push(random(-5, 5))
-    this.health = 1
+      this.dna.push(random(-5, 5));
+    this.health = 1;
+
     }
+  }
+  setNutritionValues(){
+    this.nutritionValues = [0.1, -0.1]
   }
   setMaxSpeed(maxspeed = 3){
     this.maxspeed = maxspeed 
@@ -82,7 +87,7 @@ class Animal {
   behavior(groupsToEat, groupsToAvoid){
     var steers = []
     groupsToEat.forEach((group, index) =>{
-      steers[index] = this.hunt(group)
+      steers[index] = this.hunt(group, this.nutritionValues[index])
     })
     groupsToAvoid.forEach((group, index) =>{
       let steer = this.avoid(group)
@@ -94,11 +99,13 @@ class Animal {
     })
   }
 
-  hunt(preys){
+  hunt(preys, nutrition){
     let nearest = this.findNearest(preys)
     if (nearest){
       if(this.distanceTo(nearest) < 5){
         preys.splice(preys.indexOf(nearest), 1);
+        this.health += nutrition
+        console.log(this.health)
         return this.seek(this.position);
       }else {
         return this.seek(nearest.position);
@@ -113,6 +120,9 @@ class Animal {
     if (nearest){
         this.seek(nearest.position);
     }
+  }
+  getHealthColor(){
+    return lerpColor(color(255,0,0),color(0,255,0),this.health)
   }
 
   findNearest(preys) {
@@ -166,6 +176,10 @@ class Animal {
 
 class Worm extends Animal{
 
+  setNutritionValues(values = [0.1, -0.5]){
+    this.nutritionValues = values // [apples, poisonedApples]
+  }
+
   setMaxSpeed(maxspeed = 2){
     this.maxspeed = maxspeed;
   }
@@ -178,6 +192,8 @@ class Worm extends Animal{
 
   display() {
     // Draw a worm
+
+
     var theta = this.velocity.heading() + PI / 2;
     push();
     translate(this.position.x, this.position.y);
@@ -195,6 +211,13 @@ class Worm extends Animal{
     stroke('pink');
     strokeWeight(4);
     line(0, -this.r * 2, 0, this.r * 2);
+
+    //healthBar
+    colorMode(HSB);
+    stroke((80*this.health)%360, 100, 100)
+    strokeWeight(2)
+    line(5, this.health*10, 5, -this.health*10)
+    colorMode(RGB)
     pop();
   }
 }
