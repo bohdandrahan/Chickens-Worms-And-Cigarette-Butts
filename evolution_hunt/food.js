@@ -1,17 +1,16 @@
-
 class Food {
-	constructor(num_of_apples, num_of_posioned_apples) {
+	constructor(num_of_apples, num_of_poisoned_apples) {
 		this.apples = []
-		this.posionedApples = []
+		this.poisonedApples = []
 		for (let i = 0; i < num_of_apples; i++){
 			let x = random(width);
 			let y = random(height);
 			this.apples.push(new Apple(x, y));
 		}
-		for (let i = 0; i < num_of_posioned_apples; i++){
+		for (let i = 0; i < num_of_poisoned_apples; i++){
 			let x = random(width);
 			let y = random(height);
-			this.posionedApples.push(new PoisonedApple(x,y))
+			this.poisonedApples.push(new PoisonedApple(x,y))
 		}
 	}
 
@@ -19,8 +18,8 @@ class Food {
 		for (let i = 0; i < this.apples.length; i++) {
 			this.apples[i].display();
 		}
-		for (let i = 0; i < this.posionedApples.length; i++) {
-			this.posionedApples[i].display();
+		for (let i = 0; i < this.poisonedApples.length; i++) {
+			this.poisonedApples[i].display();
 		}
 	}
 }

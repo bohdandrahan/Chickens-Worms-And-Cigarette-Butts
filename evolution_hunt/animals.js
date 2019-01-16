@@ -1,5 +1,40 @@
 // http://natureofcode.com
 // The "Vehicle" class
+class Groups {
+  constructor(dataAboutGroups = [[Worm, 10]]) {
+    //dataAboutGroups - array where each element is [name, qty]
+    this.animals = []
+    dataAboutGroups.forEach((group, index) =>{
+      this.animals[index] = []
+      for (let i = 0; i < group[1]; i++){
+        let x = random(width);
+        let y = random(height);
+        this.animals[index].push(new group[0](x,y));
+      }
+    })
+  }
+  behave(){
+    this.animals[0].forEach((worm, index) => {
+      worm.behavior([food.apples, food.poisonedApples], [])
+    })
+  }
+  update() {
+    this.animals.forEach((animals, index) => {
+      this.animals[index].forEach((animal, index) => {
+        animal.update()
+      })
+    })
+  }
+  display() {
+    this.animals.forEach((animals, index) => {
+      this.animals[index].forEach((animal, index) => {
+        animal.display()
+      })
+    })
+  }
+}
+
+
 class Vehicle {
   constructor(x, y) {
     this.acceleration = createVector(0, 0);
@@ -25,7 +60,7 @@ class Vehicle {
     this.dnaLen = dnaLen
   }
   // Method to update location
-  update() {
+  update() {  
     // Update velocity
     this.velocity.add(this.acceleration);
     // Limit speed
@@ -53,9 +88,8 @@ class Vehicle {
       steers.push(steer)
     })
     steers.forEach((steer, index) =>{
-      console.log(steer, this.dna[index])
-      steer.mult(this.dna[index])
-      this.applyForce(steer)
+      steer.mult(this.dna[index]);
+      this.applyForce(steer);
     })
   }
 
@@ -68,6 +102,8 @@ class Vehicle {
       }else {
         return this.seek(nearest.position);
       }
+    }else {
+      return this.seek(this.position);
     }
   }
 
@@ -145,6 +181,16 @@ class Worm extends Vehicle{
     push();
     translate(this.position.x, this.position.y);
     rotate(theta);
+
+    strokeWeight(2)
+    stroke('green')
+    line(0,0,0, -this.dna[0]*10)
+
+    strokeWeight(2)
+    stroke('red')
+    line(0,0,0, -this.dna[1]*10)
+
+
     stroke('pink');
     strokeWeight(4);
     line(0, -this.r * 2, 0, this.r * 2);

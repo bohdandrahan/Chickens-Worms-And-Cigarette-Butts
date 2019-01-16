@@ -7,13 +7,8 @@ let food;
 
 function setup() {
   createCanvas(640, 360);
-  worm = new Worm(width / 2, height / 2);
-  for (let i = 0; i < 10; i++) {
-    let x = random(width);
-    let y = random(height);
-
+  groups = new Groups([[Worm, 10]])
   food = new Food(100,100);
-  }
 
 }
 
@@ -22,10 +17,8 @@ function draw() {
 
   food.display();
 
-  worm.behavior([food.apples, food.poisonedApples],[]);
-  // worm.hunt(food.poisonedApples);
-
-  worm.update();
-  worm.display();
+  groups.behave();
+  groups.update();
+  groups.display();
 
 }
