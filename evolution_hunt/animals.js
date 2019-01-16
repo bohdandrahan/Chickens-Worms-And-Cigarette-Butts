@@ -1,5 +1,5 @@
 // http://natureofcode.com
-// The "Vehicle" class
+// The "Animal" class
 class Groups {
   constructor(dataAboutGroups = [[Worm, 10]]) {
     //dataAboutGroups - array where each element is [name, qty]
@@ -35,7 +35,7 @@ class Groups {
 }
 
 
-class Vehicle {
+class Animal {
   constructor(x, y) {
     this.acceleration = createVector(0, 0);
     this.velocity = createVector(0, 0);
@@ -47,6 +47,7 @@ class Vehicle {
     this.dna = []
     for (let i = 0; i < this.dnaLen; i++){
       this.dna.push(random(-5, 5))
+    this.health = 1
     }
   }
   setMaxSpeed(maxspeed = 3){
@@ -163,7 +164,7 @@ class Vehicle {
   }
 }
 
-class Worm extends Vehicle{
+class Worm extends Animal{
 
   setMaxSpeed(maxspeed = 2){
     this.maxspeed = maxspeed;
