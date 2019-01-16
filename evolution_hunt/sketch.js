@@ -21,8 +21,9 @@ function draw() {
   background(51);
 
   food.display();
-  worm.hunt(food.apples);
-  // worm.hunt(food.posionedApples);
+
+  worm.behavior([food.apples, food.poisonedApples],[]);
+  // worm.hunt(food.poisonedApples);
 
   worm.update();
   worm.display();

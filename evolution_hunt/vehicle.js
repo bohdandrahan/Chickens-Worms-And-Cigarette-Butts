@@ -8,8 +8,12 @@ class Vehicle {
     this.r = 6;
     this.setMaxSpeed();
     this.setMaxForce();
+    this.setDnaLen();
+    this.dna = []
+    for (let i = 0; i < this.dnaLen; i++){
+      this.dna.push(random(-5, 5))
+    }
   }
-
   setMaxSpeed(maxspeed = 3){
     this.maxspeed = maxspeed 
   }
@@ -17,7 +21,9 @@ class Vehicle {
   setMaxForce(maxforce = 0.4) {
     this.maxforce = maxforce
   }
-
+  setDnaLen(dnaLen = 2){
+    this.dnaLen = dnaLen
+  }
   // Method to update location
   update() {
     // Update velocity
@@ -38,6 +44,19 @@ class Vehicle {
   // STEER = DESIRED MINUS VELOCITY
 
   behavior(groupsToEat, groupsToAvoid){
+    var steers = []
+    groupsToEat.forEach((group, index) =>{
+      steers[index] = this.hunt(group)
+    })
+    groupsToAvoid.forEach((group, index) =>{
+      let steer = this.avoid(group)
+      steers.push(steer)
+    })
+    steers.forEach((steer, index) =>{
+      console.log(steer, this.dna[index])
+      steer.mult(this.dna[index])
+      this.applyForce(steer)
+    })
   }
 
   hunt(preys){
@@ -45,8 +64,9 @@ class Vehicle {
     if (nearest){
       if(this.distanceTo(nearest) < 5){
         preys.splice(preys.indexOf(nearest), 1);
+        return this.seek(this.position);
       }else {
-        this.seek(nearest.position);
+        return this.seek(nearest.position);
       }
     }
   }
@@ -54,14 +74,9 @@ class Vehicle {
   avoid(group){
     let nearest = this.findNearest(group)
     if (nearest){
-      if(this.distanceTo(nearest) < 5){
-        group.splice(group.indexOf(nearest), 1);
-      }else {
         this.seek(nearest.position);
-      }
     }
   }
-
 
   findNearest(preys) {
     let record = Infinity;
@@ -91,7 +106,7 @@ class Vehicle {
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce); // Limit to maximum steering force
 
-    this.applyForce(steer);
+    return steer;
   }
 
   display() {
@@ -113,6 +128,16 @@ class Vehicle {
 }
 
 class Worm extends Vehicle{
+
+  setMaxSpeed(maxspeed = 2){
+    this.maxspeed = maxspeed;
+  }
+  setMaxForce(maxforce = 0.02) {
+    this.maxforce = maxforce;
+  }
+  setDnaLen(dnaLen = 2){
+    this.dnaLen = dnaLen;
+  }
 
   display() {
     // Draw a worm
