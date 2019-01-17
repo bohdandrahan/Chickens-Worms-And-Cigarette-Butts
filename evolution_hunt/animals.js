@@ -19,9 +19,12 @@ class Groups {
     })
   }
   update() {
-    this.animals.forEach((animals, index) => {
-      this.animals[index].forEach((animal, index) => {
-        animal.update()
+    this.animals.forEach((animals, i) => {
+      this.animals[i].forEach((animal, j) => {
+        animal.update();
+        if (animal.isDead()){
+          this.animals[i].splice(j, 1);
+        }
       })
     })
   }
@@ -74,6 +77,8 @@ class Animal {
     this.position.add(this.velocity);
     // Reset accelerationelertion to 0 each cycle
     this.acceleration.mult(0);
+
+    this.health -= 0.003
   }
 
   applyForce(force) {
@@ -103,16 +108,18 @@ class Animal {
     let nearest = this.findNearest(preys)
     if (nearest){
       if(this.distanceTo(nearest) < 5){
-        preys.splice(preys.indexOf(nearest), 1);
-        this.health += nutrition
-        console.log(this.health)
-        return this.seek(this.position);
+        this.eat(preys, nearest, nutrition)
+        return createVector(0,0);
       }else {
         return this.seek(nearest.position);
       }
     }else {
-      return this.seek(this.position);
+      return createVector(0,0);
     }
+  }
+  eat(preys, prey, nutrition){
+    preys.splice(preys.indexOf(prey), 1);
+    this.health += nutrition
   }
 
   avoid(group){
@@ -120,9 +127,6 @@ class Animal {
     if (nearest){
         this.seek(nearest.position);
     }
-  }
-  getHealthColor(){
-    return lerpColor(color(255,0,0),color(0,255,0),this.health)
   }
 
   findNearest(preys) {
@@ -136,6 +140,10 @@ class Animal {
       }
     }
     return nearest;
+  }
+
+  isDead(){
+    return (this.health < 0)
   }
 
   distanceTo(object) {
@@ -155,6 +163,11 @@ class Animal {
 
     return steer;
   }
+
+  getHealthColor(){
+    return lerpColor(color(255,0,0),color(0,255,0),this.health)
+  }
+
 
   display() {
     // Draw a triangle rotated in the direction of velocity
@@ -183,7 +196,7 @@ class Worm extends Animal{
   setMaxSpeed(maxspeed = 2){
     this.maxspeed = maxspeed;
   }
-  setMaxForce(maxforce = 0.02) {
+  setMaxForce(maxforce = 0.1) {
     this.maxforce = maxforce;
   }
   setDnaLen(dnaLen = 2){
