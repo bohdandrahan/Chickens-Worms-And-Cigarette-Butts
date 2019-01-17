@@ -115,7 +115,7 @@ class Animal {
     // Reset accelerationelertion to 0 each cycle
     this.acceleration.mult(0);
 
-    this.health -= 0.003
+    this.health -= 0.005
   }
 
   applyForce(force) {
@@ -285,7 +285,7 @@ class Animal {
 
 class Worm extends Animal{
 
-  setNutritionValues(values = [0.1, -0.5]){
+  setNutritionValues(values = [0.1, -0.3]){
     this.nutritionValues = values // [apples, poisonedApples]
   }
 

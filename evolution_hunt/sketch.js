@@ -7,8 +7,8 @@ let food;
 
 function setup() {
   createCanvas(640, 640);
-  groups = new Groups([[Worm, 30]])
-  food = new Food(600,60);
+  groups = new Groups([[Worm, 100]])
+  food = new Food(600,200);
 
 }
 
