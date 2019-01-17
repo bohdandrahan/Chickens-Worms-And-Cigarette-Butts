@@ -13,6 +13,13 @@ class Groups {
       }
     })
   }
+  boundaries(){
+    this.animals.forEach((animals, i) => {
+      this.animals[i].forEach((animal, j) => {
+          animal.boundaries()
+      })
+    })
+  }
   behave(){
     this.animals[0].forEach((worm, index) => {
       worm.behavior([food.apples, food.poisonedApples], [])
@@ -41,19 +48,15 @@ class Groups {
 class Animal {
   constructor(x, y) {
     this.acceleration = createVector(0, 0);
-    this.velocity = createVector(0, 0);
     this.position = createVector(x, y);
     this.r = 6;
     this.setMaxSpeed();
+    this.velocity = createVector(random(this.maxspeed), random(this.maxspeed));
     this.setMaxForce();
     this.setDnaLen();
     this.setNutritionValues();
-    this.dna = [];
-    for (let i = 0; i < this.dnaLen; i++){
-      this.dna.push(random(-5, 5));
+    this.setDna();
     this.health = 1;
-
-    }
   }
   setNutritionValues(){
     this.nutritionValues = [0.1, -0.1]
@@ -67,6 +70,17 @@ class Animal {
   }
   setDnaLen(dnaLen = 2){
     this.dnaLen = dnaLen
+  }
+  setDna(){
+    this.dna = [];
+    for (let i = 0; i < this.dnaLen; i++){
+      this.dna.push(random(-2, 2));
+    }
+
+    this.dna_vision = [];
+    for (let i = 0; i < this.dnaLen; i++){
+      this.dna_vision.push(random(0, 100));
+    }
   }
   // Method to update location
   update() {  
@@ -92,7 +106,7 @@ class Animal {
   behavior(groupsToEat, groupsToAvoid){
     var steers = []
     groupsToEat.forEach((group, index) =>{
-      steers[index] = this.hunt(group, this.nutritionValues[index])
+      steers[index] = this.hunt(group, this.nutritionValues[index], this.dna_vision[index])
     })
     groupsToAvoid.forEach((group, index) =>{
       let steer = this.avoid(group)
@@ -104,14 +118,17 @@ class Animal {
     })
   }
 
-  hunt(preys, nutrition){
+  hunt(preys, nutrition, vision){
     let nearest = this.findNearest(preys)
     if (nearest){
-      if(this.distanceTo(nearest) < 5){
+      if(this.distanceTo(nearest) < this.maxspeed){
         this.eat(preys, nearest, nutrition)
         return createVector(0,0);
-      }else {
+      }else  if (this.distanceTo(nearest) < vision){
         return this.seek(nearest.position);
+      }
+      else {
+        return createVector(0,0)
       }
     }else {
       return createVector(0,0);
@@ -164,6 +181,34 @@ class Animal {
     return steer;
   }
 
+  boundaries() {
+    let d = 25;
+
+    let desired = null;
+
+    if (this.position.x < d) {
+      desired = createVector(this.maxspeed, this.velocity.y);
+    } else if (this.position.x > width - d) {
+      desired = createVector(-this.maxspeed, this.velocity.y);
+    }
+
+    if (this.position.y < d) {
+      desired = createVector(this.velocity.x, this.maxspeed);
+    } else if (this.position.y > height - d) {
+      desired = createVector(this.velocity.x, -this.maxspeed);
+    }
+
+    if (desired !== null) {
+      desired.normalize();
+      desired.mult(this.maxspeed);
+      let steer = p5.Vector.sub(desired, this.velocity);
+      steer.limit(this.maxforce);
+      this.applyForce(steer);
+    }
+  }
+
+
+
   getHealthColor(){
     return lerpColor(color(255,0,0),color(0,255,0),this.health)
   }
@@ -185,6 +230,7 @@ class Animal {
     endShape(CLOSE);
     pop();
   }
+
 }
 
 class Worm extends Animal{
@@ -212,15 +258,19 @@ class Worm extends Animal{
     translate(this.position.x, this.position.y);
     rotate(theta);
 
-    strokeWeight(2)
+    noFill()
+    strokeWeight(1)
     stroke('green')
-    line(0,0,0, -this.dna[0]*10)
+    line(0,0,0, -this.dna[0]*50)
+    ellipse(0,0, this.dna_vision[0]*2)
 
-    strokeWeight(2)
+
+    strokeWeight(1)
     stroke('red')
     line(0,0,0, -this.dna[1]*10)
+    ellipse(0,0, this.dna_vision[1]*2)
 
-
+    //body
     stroke('pink');
     strokeWeight(4);
     line(0, -this.r * 2, 0, this.r * 2);

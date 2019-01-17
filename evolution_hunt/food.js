@@ -1,17 +1,40 @@
 class Food {
 	constructor(num_of_apples, num_of_poisoned_apples) {
+		this.initNumOfApples = num_of_apples
+		this.initNumOfPoisonedApples = num_of_poisoned_apples
 		this.apples = []
 		this.poisonedApples = []
 		for (let i = 0; i < num_of_apples; i++){
-			let x = random(width);
-			let y = random(height);
-			this.apples.push(new Apple(x, y));
+			this.addNewApple()
 		}
 		for (let i = 0; i < num_of_poisoned_apples; i++){
-			let x = random(width);
-			let y = random(height);
-			this.poisonedApples.push(new PoisonedApple(x,y))
+			this.addNewPoisonedApple()
 		}
+	}
+	addNewApple(){
+		let x = random(width);
+		let y = random(height);
+		this.apples.push(new Apple(x, y));
+
+	}
+	addNewPoisonedApple(){
+		let x = random(width);
+		let y = random(height);
+		this.poisonedApples.push(new PoisonedApple(x,y))
+
+	}
+	update() {
+		let birthProb = ((this.initNumOfApples - this.apples.length)/this.initNumOfApples)
+		if (random() < birthProb){
+			this.addNewApple()
+		}
+
+		birthProb = ((this.initNumOfPoisonedApples - this.poisonedApples.length)/(10*this.initNumOfPoisonedApples))
+		if (random() < birthProb){
+			this.addNewPoisonedApple()
+		}
+
+
 	}
 
 	display() {
