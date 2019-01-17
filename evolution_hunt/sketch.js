@@ -6,9 +6,9 @@ let worm;
 let food;
 
 function setup() {
-  createCanvas(640, 360);
+  createCanvas(640, 640);
   groups = new Groups([[Worm, 30]])
-  food = new Food(30,10);
+  food = new Food(600,60);
 
 }
 
@@ -18,7 +18,6 @@ function draw() {
   food.update();
   food.display();
 
-  groups.boundaries();
   groups.behave();
   groups.update();
   groups.display();

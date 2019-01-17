@@ -11,17 +11,11 @@ class Food {
 			this.addNewPoisonedApple()
 		}
 	}
-	addNewApple(){
-		let x = random(width);
-		let y = random(height);
+	addNewApple(x = random(width), y = random(height)){
 		this.apples.push(new Apple(x, y));
-
 	}
-	addNewPoisonedApple(){
-		let x = random(width);
-		let y = random(height);
+	addNewPoisonedApple(x = random(width), y = random(height)){
 		this.poisonedApples.push(new PoisonedApple(x,y))
-
 	}
 	update() {
 		let birthProb = ((this.initNumOfApples - this.apples.length)/this.initNumOfApples)

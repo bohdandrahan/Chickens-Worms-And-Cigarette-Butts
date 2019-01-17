@@ -4,22 +4,21 @@ class Groups {
   constructor(dataAboutGroups = [[Worm, 10]]) {
     //dataAboutGroups - array where each element is [name, qty]
     this.animals = []
-    dataAboutGroups.forEach((group, index) =>{
+    dataAboutGroups.forEach((name_qty, index) =>{
       this.animals[index] = []
-      for (let i = 0; i < group[1]; i++){
-        let x = random(width);
-        let y = random(height);
-        this.animals[index].push(new group[0](x,y));
+      for (let i = 0; i < name_qty[1]; i++){
+        this.addNewAnimal(this.animals[index], name_qty[0])
       }
     })
   }
-  boundaries(){
-    this.animals.forEach((animals, i) => {
-      this.animals[i].forEach((animal, j) => {
-          animal.boundaries()
-      })
-    })
+  addNewAnimal(group, name, x = random(width), y = random(height)){
+    group.push(new name(x,y));
   }
+
+  addAnimal(group, animal){
+    group.push(animal)
+  }
+
   behave(){
     this.animals[0].forEach((worm, index) => {
       worm.behavior([food.apples, food.poisonedApples], [])
@@ -27,12 +26,28 @@ class Groups {
   }
   update() {
     this.animals.forEach((animals, i) => {
-      this.animals[i].forEach((animal, j) => {
+      this.children = []
+      animals.forEach((animal, j) => {
         animal.update();
         if (animal.isDead()){
-          this.animals[i].splice(j, 1);
+          for(let n=0; n <3; n++){
+            food.addNewApple(animal.position.x + random(-10,10), animal.position.y + random(-10,10))
+          }
+          animals.splice(j, 1);
+        }
+
+        if (animal.health > 1.5){
+          animal.health = 0.5
+          let child = animal.getChild()
+          this.children.push(child)
         }
       })
+      if (this.children.length > 0){
+        console.log(this.children)
+        this.children.forEach((child) =>{
+          this.addAnimal(animals, child)
+        })
+      }
     })
   }
   display() {
@@ -46,7 +61,7 @@ class Groups {
 
 
 class Animal {
-  constructor(x, y) {
+  constructor(x, y, dna = null) {
     this.acceleration = createVector(0, 0);
     this.position = createVector(x, y);
     this.r = 6;
@@ -55,13 +70,14 @@ class Animal {
     this.setMaxForce();
     this.setDnaLen();
     this.setNutritionValues();
-    this.setDna();
+    this.setDna(dna);
     this.health = 1;
+    this.setMutationRate();
   }
   setNutritionValues(){
     this.nutritionValues = [0.1, -0.1]
   }
-  setMaxSpeed(maxspeed = 3){
+  setMaxSpeed(maxspeed = 10){
     this.maxspeed = maxspeed 
   }
 
@@ -71,16 +87,23 @@ class Animal {
   setDnaLen(dnaLen = 2){
     this.dnaLen = dnaLen
   }
-  setDna(){
-    this.dna = [];
-    for (let i = 0; i < this.dnaLen; i++){
-      this.dna.push(random(-2, 2));
-    }
+  setDna(dna = null){
+    if (!dna){
+      this.dna = [];
+      for (let i = 0; i < this.dnaLen; i++){
+        this.dna.push(random(-2, 2));
+      }
 
-    this.dna_vision = [];
-    for (let i = 0; i < this.dnaLen; i++){
-      this.dna_vision.push(random(0, 100));
-    }
+      this.dna_vision = [];
+      for (let i = 0; i < this.dnaLen; i++){
+        this.dna_vision.push(random(0, 100));
+      }
+    } else{
+      this.dna = dna[0]
+      this.dna_vision = dna[1]}
+  }
+  setMutationRate(){
+    this.mutationRate = [0.5, 5]
   }
   // Method to update location
   update() {  
@@ -117,20 +140,48 @@ class Animal {
       this.applyForce(steer);
     })
   }
+  getChild(){
+    let dna = this.getMutatedDna()
+    let x = this.position.x
+    let y = this.position.y
+    let child = new this.constructor(x, y, dna)
+    return child
+  }
+  getMutatedDna(){
+    let mutatedDna = []
+    let mutatedDnaVision = []
+    this.dna.forEach((dna_, index) => {
+      mutatedDna[index] = dna_ + random(-this.mutationRate[0], this.mutationRate[0]);
+    });
+    this.dna_vision.forEach((dna_v, index) =>{
+      mutatedDnaVision[index] = dna_v + random(-this.mutationRate[1], this.mutationRate[1])
+    });
+    return [mutatedDna, mutatedDnaVision]
+  }
+  mutate(){
+    this.dna.forEach((dna_, index) => {
+      this.dna[index] += random(-this.mutationRate[0], this.mutationRate[0])
+    })
+    this.dna_vision.forEach((dnam_vision,index)=>{
+      this.dna_vision[index] += random(-this.mutationRate[1], this.mutationRate[1])
+    })
+  }
 
   hunt(preys, nutrition, vision){
     let nearest = this.findNearest(preys)
     if (nearest){
-      if(this.distanceTo(nearest) < this.maxspeed){
+      if(this.distanceTo(nearest) < max(this.maxspeed, 5)){
         this.eat(preys, nearest, nutrition)
         return createVector(0,0);
       }else  if (this.distanceTo(nearest) < vision){
         return this.seek(nearest.position);
       }
       else {
-        return createVector(0,0)
+        this.boundaries();
+        return createVector(0,0);
       }
     }else {
+      this.boundaries();
       return createVector(0,0);
     }
   }
@@ -143,6 +194,7 @@ class Animal {
     let nearest = this.findNearest(group)
     if (nearest){
         this.seek(nearest.position);
+    } else{
     }
   }
 
@@ -206,8 +258,6 @@ class Animal {
       this.applyForce(steer);
     }
   }
-
-
 
   getHealthColor(){
     return lerpColor(color(255,0,0),color(0,255,0),this.health)
