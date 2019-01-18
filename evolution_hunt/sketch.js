@@ -2,21 +2,18 @@
 // Implements Craig Reynold's autonomous steering behaviors
 // See: http://www.red3d.com/cwr/
 
-let worm;
-let food;
+let groups;
+
+var showDna;
 
 function setup() {
-  createCanvas(640, 640);
-  groups = new Groups([[Worm, 100]])
-  food = new Food(600,200);
-
+  createCanvas(640, 320);
+  groups = new Groups([[Worm, 10], [Chicken, 5]])
+  showDna = createCheckbox();
 }
 
 function draw() {
-  background(77, 51, 25);
-
-  food.update();
-  food.display();
+  background(0, 77, 0);
 
   groups.behave();
   groups.update();

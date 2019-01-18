@@ -18,12 +18,14 @@ class Food {
 		this.poisonedApples.push(new PoisonedApple(x,y))
 	}
 	update() {
-		let birthProb = ((this.initNumOfApples - this.apples.length)/this.initNumOfApples)
-		if (random() < birthProb){
-			this.addNewApple()
+		for (let i = 0; i < this.apples.length; i++){
+			let birthProb = (2.3*(this.initNumOfApples - this.apples.length)/(this.initNumOfApples*this.apples.length));
+			if (random() < birthProb){
+				this.addNewApple()
+			}
 		}
 
-		birthProb = ((this.initNumOfPoisonedApples - this.poisonedApples.length)/(10*this.initNumOfPoisonedApples))
+		let birthProb = ((this.initNumOfPoisonedApples - this.poisonedApples.length)/(10*this.initNumOfPoisonedApples))
 		if (random() < birthProb){
 			this.addNewPoisonedApple()
 		}
@@ -57,7 +59,7 @@ class AbstractApple {
 
 class Apple extends AbstractApple {
 	setColor(){
-		this.clr = ['green']
+		this.clr = [0, 255, 0]
 	}
 }
 

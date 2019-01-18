@@ -1,64 +1,5 @@
 // http://natureofcode.com
 // The "Animal" class
-class Groups {
-  constructor(dataAboutGroups = [[Worm, 10]]) {
-    //dataAboutGroups - array where each element is [name, qty]
-    this.animals = []
-    dataAboutGroups.forEach((name_qty, index) =>{
-      this.animals[index] = []
-      for (let i = 0; i < name_qty[1]; i++){
-        this.addNewAnimal(this.animals[index], name_qty[0])
-      }
-    })
-  }
-  addNewAnimal(group, name, x = random(width), y = random(height)){
-    group.push(new name(x,y));
-  }
-
-  addAnimal(group, animal){
-    group.push(animal)
-  }
-
-  behave(){
-    this.animals[0].forEach((worm, index) => {
-      worm.behavior([food.apples, food.poisonedApples], [])
-    })
-  }
-  update() {
-    this.animals.forEach((animals, i) => {
-      this.children = []
-      animals.forEach((animal, j) => {
-        animal.update();
-        if (animal.isDead()){
-          for(let n=0; n <3; n++){
-            food.addNewApple(animal.position.x + random(-10,10), animal.position.y + random(-10,10))
-          }
-          animals.splice(j, 1);
-        }
-
-        if (animal.health > 1.5){
-          animal.health = 0.5
-          let child = animal.getChild()
-          this.children.push(child)
-        }
-      })
-      if (this.children.length > 0){
-        console.log(this.children)
-        this.children.forEach((child) =>{
-          this.addAnimal(animals, child)
-        })
-      }
-    })
-  }
-  display() {
-    this.animals.forEach((animals, index) => {
-      this.animals[index].forEach((animal, index) => {
-        animal.display()
-      })
-    })
-  }
-}
-
 
 class Animal {
   constructor(x, y, dna = null) {
@@ -66,44 +7,53 @@ class Animal {
     this.position = createVector(x, y);
     this.r = 6;
     this.setMaxSpeed();
-    this.velocity = createVector(random(this.maxspeed), random(this.maxspeed));
+    this.velocity = createVector(random(-this.maxspeed, this.maxspeed), random(-this.maxspeed, this.maxspeed));
     this.setMaxForce();
     this.setDnaLen();
+    this.setDnaCeiling();
     this.setNutritionValues();
     this.setDna(dna);
     this.health = 1;
     this.setMutationRate();
+    this.setHealthDrop();
   }
   setNutritionValues(){
     this.nutritionValues = [0.1, -0.1]
   }
-  setMaxSpeed(maxspeed = 10){
+  setMaxSpeed(maxspeed = 2){
     this.maxspeed = maxspeed 
   }
 
-  setMaxForce(maxforce = 0.4) {
+  setMaxForce(maxforce = 0.1) {
     this.maxforce = maxforce
   }
   setDnaLen(dnaLen = 2){
     this.dnaLen = dnaLen
   }
+  setDnaCeiling(){
+    this.dnaCeiling = 2;
+    this.dnaCeilingVision = 100
+  }
   setDna(dna = null){
     if (!dna){
       this.dna = [];
       for (let i = 0; i < this.dnaLen; i++){
-        this.dna.push(random(-2, 2));
+        this.dna.push(random(-this.dnaCeiling, this.dnaCeiling));
       }
 
       this.dna_vision = [];
       for (let i = 0; i < this.dnaLen; i++){
-        this.dna_vision.push(random(0, 100));
+        this.dna_vision.push(random(0, this.dnaCeilingVision));
       }
     } else{
       this.dna = dna[0]
       this.dna_vision = dna[1]}
   }
   setMutationRate(){
-    this.mutationRate = [0.5, 5]
+    this.mutationRate = [0.5, 10]
+  }
+  setHealthDrop(hD = 0.005){
+    this.healthDrop = hD
   }
   // Method to update location
   update() {  
@@ -115,7 +65,8 @@ class Animal {
     // Reset accelerationelertion to 0 each cycle
     this.acceleration.mult(0);
 
-    this.health -= 0.005
+    this.health -= this.healthDrop
+    this.boundaries()
   }
 
   applyForce(force) {
@@ -132,7 +83,7 @@ class Animal {
       steers[index] = this.hunt(group, this.nutritionValues[index], this.dna_vision[index])
     })
     groupsToAvoid.forEach((group, index) =>{
-      let steer = this.avoid(group)
+      let steer = this.avoid(group, this.dna_vision[index])
       steers.push(steer)
     })
     steers.forEach((steer, index) =>{
@@ -151,20 +102,20 @@ class Animal {
     let mutatedDna = []
     let mutatedDnaVision = []
     this.dna.forEach((dna_, index) => {
-      mutatedDna[index] = dna_ + random(-this.mutationRate[0], this.mutationRate[0]);
+      let newDna = dna_ + random(-this.mutationRate[0], this.mutationRate[0]);
+      if (newDna < -this.dnaCeiling || newDna > this.dnaCeiling){
+        newDna = dna_
+      }
+      mutatedDna[index] = newDna;
     });
     this.dna_vision.forEach((dna_v, index) =>{
-      mutatedDnaVision[index] = dna_v + random(-this.mutationRate[1], this.mutationRate[1])
+      let newDna_v = dna_v + random(-this.mutationRate[1], this.mutationRate[1]);
+      if (newDna_v < 0 || newDna_v > this.dnaCeilingVision){
+        newDna_v = dna_v;
+      }
+      mutatedDnaVision[index] = newDna_v;
     });
     return [mutatedDna, mutatedDnaVision]
-  }
-  mutate(){
-    this.dna.forEach((dna_, index) => {
-      this.dna[index] += random(-this.mutationRate[0], this.mutationRate[0])
-    })
-    this.dna_vision.forEach((dnam_vision,index)=>{
-      this.dna_vision[index] += random(-this.mutationRate[1], this.mutationRate[1])
-    })
   }
 
   hunt(preys, nutrition, vision){
@@ -190,11 +141,16 @@ class Animal {
     this.health += nutrition
   }
 
-  avoid(group){
+  avoid(group, vision){
     let nearest = this.findNearest(group)
     if (nearest){
-        this.seek(nearest.position);
+      if (this.distanceTo(nearest) < vision){
+        return this.seek(nearest.position);
+      } else{
+        return createVector(0,0);
+      }
     } else{
+      return createVector(0,0);
     }
   }
 
@@ -267,7 +223,7 @@ class Animal {
   display() {
     // Draw a triangle rotated in the direction of velocity
     var theta = this.velocity.heading() + PI / 2;
-    fill(127);
+    fill();
     stroke(200);
     strokeWeight(1);
     push();
@@ -281,56 +237,4 @@ class Animal {
     pop();
   }
 
-}
-
-class Worm extends Animal{
-
-  setNutritionValues(values = [0.1, -0.3]){
-    this.nutritionValues = values // [apples, poisonedApples]
-  }
-
-  setMaxSpeed(maxspeed = 2){
-    this.maxspeed = maxspeed;
-  }
-  setMaxForce(maxforce = 0.1) {
-    this.maxforce = maxforce;
-  }
-  setDnaLen(dnaLen = 2){
-    this.dnaLen = dnaLen;
-  }
-
-  display() {
-    // Draw a worm
-
-
-    var theta = this.velocity.heading() + PI / 2;
-    push();
-    translate(this.position.x, this.position.y);
-    rotate(theta);
-
-    noFill()
-    strokeWeight(1)
-    stroke('green')
-    line(0,0,0, -this.dna[0]*50)
-    ellipse(0,0, this.dna_vision[0]*2)
-
-
-    strokeWeight(1)
-    stroke('red')
-    line(0,0,0, -this.dna[1]*10)
-    ellipse(0,0, this.dna_vision[1]*2)
-
-    //body
-    stroke('pink');
-    strokeWeight(4);
-    line(0, -this.r * 2, 0, this.r * 2);
-
-    //healthBar
-    colorMode(HSB);
-    stroke((80*this.health)%360, 100, 100)
-    strokeWeight(2)
-    line(5, this.health*10, 5, -this.health*10)
-    colorMode(RGB)
-    pop();
-  }
 }
