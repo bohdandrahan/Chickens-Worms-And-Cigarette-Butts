@@ -2,10 +2,16 @@
 // Implements Craig Reynold's autonomous steering behaviors
 // See: http://www.red3d.com/cwr/
 let groups;
-var showDna;
+var info, showDna;
 var area;
 var standartArea;
+
+info = document.getElementById("info");
+showDna = true;
+
+
 function setup() {
+
   createCanvas(window.innerWidth, window.innerHeight);
   area = window.innerWidth * window.innerHeight
   standartArea = 200000
@@ -14,7 +20,6 @@ function setup() {
   cigaretteButtsDensity = 20/standartArea
   console.log(area * cigaretteButtsDensity)
   groups = new Groups([[Worm, area * wormsDensity], [Chicken, area * chickensDensity], [CigaretteButt, area * cigaretteButtsDensity]]);
-  showDna = createCheckbox('Show DNA', true);
 }
 
 function draw() {
@@ -24,3 +29,7 @@ function draw() {
   groups.display();
 
 }
+
+info.addEventListener("change", function(e){
+	showDna = !showDna;
+});

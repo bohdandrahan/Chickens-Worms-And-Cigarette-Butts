@@ -26,7 +26,7 @@ class Chicken extends Animal{
     translate(this.position.x, this.position.y);    rotate(theta);
 
     //dna 
-    if (showDna.checked()){
+    if (showDna){
     noFill()
     strokeWeight(1)
     stroke('pink')
