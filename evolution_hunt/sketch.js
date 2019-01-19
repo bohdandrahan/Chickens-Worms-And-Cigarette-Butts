@@ -13,7 +13,7 @@ function setup() {
 }
 
 function draw() {
-  background(0, 77, 0);
+  background(77, 77, 77);
   groups.behave();
   groups.update();
   groups.display();

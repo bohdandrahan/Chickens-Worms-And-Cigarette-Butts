@@ -1,6 +1,6 @@
 class Chicken extends Animal{
 
-  setNutritionValues(values = [0.25, -0.5]){
+  setNutritionValues(values = [0.25, -1]){
     this.nutritionValues = values // [worms]
   }
   setDnaLen(dnaLen = 2){
