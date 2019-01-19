@@ -9,8 +9,10 @@ class Worm extends Animal{
   setDnaLen(dnaLen = 0){
     this.dnaLen = dnaLen;
   }
-    setHealthDrop(hD = 0){
+  setHealthDrop(hD = 0){
     this.healthDrop = hD
+  }
+  behavior(groupsToEat, groupsToAvoid){
   }
 
   display() {

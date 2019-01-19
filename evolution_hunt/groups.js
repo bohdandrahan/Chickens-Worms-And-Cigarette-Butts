@@ -70,7 +70,7 @@ class Groups {
       this.addNewAnimal(worms, Worm)
     }
     worms.forEach((worm) => { 
-      let birthProb = 0.03/worms.length
+      let birthProb = 0.025/worms.length*(area/standartArea)
       if (random() < birthProb){
         let newDna = worm.getMutatedDna()
         let newSpeed = min((worm.maxspeed + random(-0.1,0.1)), 1.7)
