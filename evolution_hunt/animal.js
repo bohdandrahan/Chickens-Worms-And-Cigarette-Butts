@@ -16,6 +16,7 @@ class Animal {
     this.health = 1;
     this.setMutationRate();
     this.setHealthDrop();
+    this.setDirection();
   }
   setNutritionValues(){
     this.nutritionValues = [0.1, -0.1]
@@ -55,6 +56,10 @@ class Animal {
   setHealthDrop(hD = 0.005){
     this.healthDrop = hD
   }
+  setDirection(){
+    //abstract method, used is CigaretteButt
+  }
+
   // Method to update location
   update() {  
     // Update velocity
@@ -121,7 +126,7 @@ class Animal {
   hunt(preys, nutrition, vision){
     let nearest = this.findNearest(preys)
     if (nearest){
-      if(this.distanceTo(nearest) < max(this.maxspeed, 5)){
+      if(this.distanceTo(nearest) < max(this.maxspeed, 7)){
         this.eat(preys, nearest, nutrition)
         return createVector(0,0);
       }else  if (this.distanceTo(nearest) < vision){

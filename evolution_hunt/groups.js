@@ -2,11 +2,9 @@ class Groups {
   constructor(dataAboutGroups = [[Worm, 10]]) {
     //dataAboutGroups - array where each element is [name, qty]
     this.animals = []
-    console.log(dataAboutGroups)
     this.dataAboutGroups = dataAboutGroups
     this.dataAboutGroups.forEach((name_qty, index) =>{
       this.animals[index] = []
-      console.log('uaoeu')
       for (let i = 0; i < name_qty[1]; i++){
         this.addNewAnimal(this.animals[index], name_qty[0])
       }
@@ -28,7 +26,12 @@ class Groups {
     //chickens
     this.animals[1].forEach((chicken) => {
       let worms = this.animals[0]
-      chicken.behavior([worms],[])
+      let cigaretteButts = this.animals[2]
+      chicken.behavior([worms, cigaretteButts],[])
+    })
+    //CigaretteButts
+    this.animals[2].forEach((cigaretteButt) => {
+      cigaretteButt.behavior([],[])
     })
   }
   update() {
@@ -55,7 +58,10 @@ class Groups {
     })
 
     //Worms
-    this.wormsBirth()
+    if (this.animals[1].length > 0){
+    this.wormsBirth()}
+    //CigareteButts
+    this.AddCigarettesButts()
   }
   wormsBirth() {
     let worms = this.animals[0]
@@ -63,7 +69,7 @@ class Groups {
     if(worms.length === 0){
       this.addNewAnimal(worms, Worm)
     }
-    worms.forEach((worm) => {
+    worms.forEach((worm) => { 
       let birthProb = 0.03/worms.length
       if (random() < birthProb){
         let newDna = worm.getMutatedDna()
@@ -74,6 +80,16 @@ class Groups {
         newWorm.setDna(newDna)
         newWorm.setMaxSpeed(newSpeed)
         this.addAnimal(worms, newWorm)
+      }
+    })
+  }
+  AddCigarettesButts(){
+    let cigaretteButts = this.animals[2]
+    let initNumOfCigarettes = this.dataAboutGroups[2][1]
+    cigaretteButts.forEach((cigaretteButt) => { 
+      let birthProb = (initNumOfCigarettes - cigaretteButts.length)/initNumOfCigarettes /cigaretteButts.length
+      if (random() < birthProb){
+        this.addNewAnimal(cigaretteButts, CigaretteButt)
       }
     })
   }

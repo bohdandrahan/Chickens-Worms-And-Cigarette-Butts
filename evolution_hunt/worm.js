@@ -21,21 +21,21 @@ class Worm extends Animal{
     translate(this.position.x, this.position.y);
     rotate(theta);
 
-    //dna apples
+    //dna[0]
     noFill()
     strokeWeight(0.5)
     stroke('white')
     line(0,0,0, -this.dna[0]*50)
     ellipse(0,0, this.dna_vision[0]*2)
 
-    //dna poisonedApples
+    //dna[1]
     strokeWeight(1)
     stroke('red')
     line(0,0,0, -this.dna[1]*10)
     ellipse(0,0, this.dna_vision[1]*2)
 
     //body
-    stroke('pink');
+    stroke(255, 153, 204);
     strokeWeight(4);
     line(0, -this.r * 2, 0, this.r * 2);
     pop();

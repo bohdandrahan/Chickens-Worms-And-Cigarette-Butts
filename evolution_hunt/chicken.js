@@ -1,9 +1,9 @@
 class Chicken extends Animal{
 
-  setNutritionValues(values = [0.25]){
+  setNutritionValues(values = [0.25, -0.5]){
     this.nutritionValues = values // [worms]
   }
-  setDnaLen(dnaLen = 1){
+  setDnaLen(dnaLen = 2){
     this.dnaLen = dnaLen;
   }
   setHealthDrop(){
@@ -32,6 +32,13 @@ class Chicken extends Animal{
     stroke('pink')
     line(0,0,0, -this.dna[0]*50)
     ellipse(0,0, this.dna_vision[0]*2)
+
+    noFill()
+    strokeWeight(1)
+    stroke('red')
+    line(0,0,0, -this.dna[1]*50)
+    ellipse(0,0, this.dna_vision[1]*2)
+
     }
     //body
     noStroke()
