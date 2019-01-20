@@ -1,5 +1,5 @@
 ### Chicken, Worms and Cigarette Butts 🐔🐛🚬
-![alt text](images/logo.png)
+![alt text](images/logo.png =200x200)
 
 Evolutionary steering behaviors implemented in JavaScript using p5.js.
 The system where autonomous steering agents (Chickens) evolve the behavior of eating food (Worms) and avoiding poison (Cigarette Butts).
