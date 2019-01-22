@@ -18,7 +18,6 @@ function setup() {
   wormsDensity = 10/standartArea
   chickensDensity = 5/standartArea
   cigaretteButtsDensity = 20/standartArea
-  console.log(area * cigaretteButtsDensity)
   groups = new Groups([[Worm, area * wormsDensity], [Chicken, area * chickensDensity], [CigaretteButt, area * cigaretteButtsDensity]]);
 }
 
