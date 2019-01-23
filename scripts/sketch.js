@@ -11,9 +11,12 @@ showDna = true;
 
 
 function setup() {
+  height = 0.95 * windowHeight;
+  width = 0.95 * windowWidth;
+  let canvas = createCanvas(width, height);
+  canvas.parent('sketch-holder')
 
-  createCanvas(window.innerWidth, window.innerHeight);
-  area = window.innerWidth * window.innerHeight
+  area = width * window.height
   standartArea = 200000
   wormsDensity = 10/standartArea
   chickensDensity = 5/standartArea
@@ -27,6 +30,11 @@ function draw() {
   groups.update();
   groups.display();
 
+}
+function windowResized() {
+  width = 0.95 * windowWidth;
+  height = 0.95 * windowHeight
+  resizeCanvas(width, height);
 }
 
 info.addEventListener("change", function(e){
